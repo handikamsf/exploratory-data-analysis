@@ -15,6 +15,21 @@ image2 = Image.open("logo tim.png")
 # --- CONFIG PAGE ---
 st.set_page_config(page_title="Dashboard Circle Pertemanan", layout="wide")
 
+st.markdown("""
+    <style>
+    /* Ubah warna background chip multiselect */
+    div[data-baseweb="tag"] {
+        background-color: #3B82F6 !important;   /* biru */
+        color: white !important;
+    }
+    /* Ubah warna tombol "X" */
+    div[data-baseweb="tag"] span {
+        color: white !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # --- SIDEBAR FILTER (SLICER) ---
 st.sidebar.markdown("### 🎚️ <span style='color:#1E90FF'>Filter Data</span>", unsafe_allow_html=True)
 
@@ -42,30 +57,6 @@ else:
 # Ambil prodi hanya dari fakultas terpilih
 prodi_list = sorted(df[df['Fakultas'].isin(filtered_fakultas)]['Program Studi'].unique().tolist())
 prodi_options = ['Semua'] + prodi_list
-
-st.markdown(
-    """
-    <style>
-    /* Style untuk selected option di multiselect */
-    div[data-baseweb="tag"] {
-        background-color: #3B82F6 !important;  /* biru */
-        color: white !important;
-        border-radius: 4px !important;
-    }
-
-    /* Optional: hover effect */
-    div[data-baseweb="tag"]:hover {
-        background-color: #2563EB !important; /* biru sedikit lebih gelap saat hover */
-    }
-
-    /* Hilangkan outline merah default */
-    div[data-baseweb="tag"] svg {
-        stroke: white !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 selected_prodi = st.sidebar.multiselect(
     "Pilih Program Studi",
@@ -929,5 +920,6 @@ with tab4:
             unsafe_allow_html=True
 
     )
+
 
 
