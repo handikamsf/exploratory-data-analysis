@@ -15,6 +15,10 @@ image2 = Image.open("logo tim.png")
 # --- CONFIG PAGE ---
 st.set_page_config(page_title="Dashboard Circle Pertemanan", layout="wide")
 
+
+# --- SIDEBAR FILTER (SLICER) ---
+st.sidebar.markdown("### 🎚️ <span style='color:#1E90FF'>Filter Data</span>", unsafe_allow_html=True)
+
 st.markdown("""
     <style>
     /* Ubah warna background chip multiselect */
@@ -28,10 +32,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-
-# --- SIDEBAR FILTER (SLICER) ---
-st.sidebar.markdown("### 🎚️ <span style='color:#1E90FF'>Filter Data</span>", unsafe_allow_html=True)
 
 # ========================
 # 🔹 Fakultas Multiselect
@@ -920,6 +920,7 @@ with tab4:
             unsafe_allow_html=True
 
     )
+
 
 
 
