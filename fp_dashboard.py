@@ -26,7 +26,7 @@ st.markdown("""
         background-color: #3B82F6 !important;   /* biru */
         color: white !important;
     }
-    /* Ubah warna tombol "X" */
+    /* Ubah warna tombol "Pilih Fakultas" */
     div[data-baseweb="tag"] span {
         color: white !important;
     }
@@ -920,6 +920,7 @@ with tab4:
             unsafe_allow_html=True
 
     )
+
 
 
 
