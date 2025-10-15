@@ -7,3 +7,4 @@ Pillow
 plotly
 scipy
 scikit-learn
+openpyxl
