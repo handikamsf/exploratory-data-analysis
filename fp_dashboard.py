@@ -62,6 +62,32 @@ filtered_df = df[
     (df['Program Studi'].isin(filtered_prodi))
 ]
 
+st.markdown(
+    """
+    <style>
+    /* Warna teks tab yang belum aktif */
+    .stTabs [data-baseweb="tab"] {
+        color: #E2E8F0;
+    }
+
+    /* Warna tab aktif */
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-color: #3B82F6 !important;
+        color: white !important;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    /* Warna garis bawah tab aktif */
+    .stTabs [data-baseweb="tab-highlight"] {
+        background-color: #3B82F6 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 
 tab0, tab1, tab2, tab3, tab4 = st.tabs([
     "🏠 Dashboard Overview",
@@ -877,4 +903,5 @@ with tab4:
             </div>
             """,
             unsafe_allow_html=True
+
     )
