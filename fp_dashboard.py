@@ -15,23 +15,8 @@ image2 = Image.open("logo tim.png")
 # --- CONFIG PAGE ---
 st.set_page_config(page_title="Dashboard Circle Pertemanan", layout="wide")
 
-
 # --- SIDEBAR FILTER (SLICER) ---
 st.sidebar.markdown("### 🎚️ <span style='color:#1E90FF'>Filter Data</span>", unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-    /* Ubah warna background chip multiselect */
-    div[data-baseweb="tag"] {
-        background-color: #3B82F6 !important;   /* biru */
-        color: white !important;
-    }
-    /* Ubah warna tombol "Pilih Fakultas" */
-    div[data-baseweb="tag"] span {
-        color: white !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 # ========================
 # 🔹 Fakultas Multiselect
@@ -103,7 +88,6 @@ st.markdown(
 )
 
 
-
 tab0, tab1, tab2, tab3, tab4 = st.tabs([
     "🏠 Dashboard Overview",
     "📊 Analisis Deskriptif",
@@ -135,6 +119,12 @@ with tab0:
         st.image(image2, width=250)  # logo kanan
 
     st.markdown("<hr>", unsafe_allow_html=True)
+
+    # Highlight insights hook penonton center rata tengah
+    st.subheader("🙋‍♂️**Seberapa besar circle pertemanan memengaruhi motivasi belajar mahasiswa?**")
+    st.markdown("#### Dari 164 responden, ditemukan bahwa dukungan circle yang konsisten dapat meningkatkan motivasi tugas hingga 72% secara linear. Temuan ini mengungkap sisi tersembunyi dari circle yakni bukan hanya sekadar ruang nongkrong, tapi juga pendorong akademik yang kuat.")
+    st.markdown("##### *Tapi, apakah dinamika ini berlaku sama di semua fakultas? Atau justru ada perbedaan mencolok antara mahasiswa Fasilkom dan non-Fasilkom? Lebih jauh lagi, faktor circle mana yang benar-benar berpengaruh secara signifikan terhadap motivasi belajar mahasiswa?* **Temukan jawabannya di dashboard interaktif ini!** 🤗🧐")
+    st.markdown("---")
 
     # ======== PENJELASAN DATA ========
     col4, col5 = st.columns(2)
@@ -235,14 +225,12 @@ with tab1:
 
     st.markdown("## 🧍 Identitas Responden")
 
-    col1, col2 = st.columns(2)
-
     # Grafik Fakultas (Vertikal)
-    with col1:
-        fakultas_count = filtered_df['Fakultas'].value_counts().reset_index()
-        fakultas_count.columns = ['Fakultas', 'Jumlah']
 
-        fig_fakultas = px.bar(
+    fakultas_count = filtered_df['Fakultas'].value_counts().reset_index()
+    fakultas_count.columns = ['Fakultas', 'Jumlah']
+
+    fig_fakultas = px.bar(
             fakultas_count,
             x='Fakultas',
             y='Jumlah',
@@ -250,68 +238,22 @@ with tab1:
             title='Distribusi Responden per Fakultas',
             color_discrete_sequence=custom_blues
         )
-        fig_fakultas.update_layout(**common_layout, xaxis={'categoryorder':'total descending'}, showlegend=False)
-        st.plotly_chart(fig_fakultas, use_container_width=True)
+    fig_fakultas.update_layout(common_layout, xaxis={'categoryorder':'total descending'}, showlegend=False)
+    st.plotly_chart(fig_fakultas, use_container_width=True)
 
-        st.markdown(
+    st.markdown(
             f"**Insight:** Total responden: **{len(filtered_df)}**. Fakultas terbanyak: **{fakultas_count.iloc[0]['Fakultas']}** ({fakultas_count.iloc[0]['Jumlah']} responden)."
         )  
-
-    # Grafik Program Studi (Horizontal)
-    with col2:
-        prodi_count = filtered_df['Program Studi'].value_counts().reset_index()
-        prodi_count.columns = ['Program Studi', 'Jumlah']
-
-        fig_prodi = px.bar(
-            prodi_count,
-            x='Jumlah',
-            y='Program Studi',
-            color='Program Studi',
-            title='Distribusi Responden per Program Studi',
-            orientation='h',
-            color_discrete_sequence=custom_blues
-        )
-        fig_prodi.update_layout(**common_layout, yaxis={'categoryorder':'total ascending'},showlegend=False)
-        st.plotly_chart(fig_prodi, use_container_width=True)
-
-        st.markdown(
-            f"**Insight:** Program studi terbanyak: **{prodi_count.iloc[0]['Program Studi']}** ({prodi_count.iloc[0]['Jumlah']} responden)."
-        )
 
     st.markdown("---")
 
     # 2. KONDISI CIRCLE
     # ---------------------------
     st.markdown("### 🫂 Kondisi Circle")
-    col3, col4 = st.columns(2)
 
-    with col3:
-        # Histogram Jumlah Anggota Circle (transparan) 
-        fig_jumlah_circle = px.histogram(
-            filtered_df,
-            x='Jumlah Anggota Circle',
-            nbins=15,
-            title='Sebaran Jumlah Anggota Circle',
-            color_discrete_sequence=custom_blues
-        )
-        fig_jumlah_circle.update_layout(common_layout, showlegend=False)
-        fig_jumlah_circle.update_xaxes(title_text="Jumlah Anggota")
-        fig_jumlah_circle.update_yaxes(title_text="Frekuensi")
-        st.plotly_chart(fig_jumlah_circle, use_container_width=True)
-
-        # Tambahan insight jumlah anggota circle
-        mean_circle_size = filtered_df['Jumlah Anggota Circle'].mean()
-        median_circle_size = filtered_df['Jumlah Anggota Circle'].median()
-        st.markdown(
-            f"**Insight:** Rata-rata jumlah anggota circle adalah **{mean_circle_size:.1f} orang** dengan median **{median_circle_size} orang**. *Circle yang lebih besar dapat menawarkan lebih banyak dukungan sosial.*"
-        )
-      
-
-    with col4:
-        # Proporsi kategori circle (pie chart)
-        circle_count = filtered_df['Circle Category'].value_counts().reset_index()
-        circle_count.columns = ['Kategori Circle', 'Jumlah']
-        fig_circle = px.pie(
+    circle_count = filtered_df['Circle Category'].value_counts().reset_index()
+    circle_count.columns = ['Kategori Circle', 'Jumlah']
+    fig_circle = px.pie(
             circle_count,
             names='Kategori Circle',
             values='Jumlah',
@@ -319,17 +261,19 @@ with tab1:
             color_discrete_sequence=custom_blues
         )
         #color text inside pie white
-        fig_circle.update_traces(textposition='inside', textinfo='percent+label')
-        fig_circle.update_layout(common_layout, showlegend=False)
-        st.plotly_chart(fig_circle, use_container_width=True)
+    fig_circle.update_traces(textposition='inside', textinfo='percent+label')
+    fig_circle.update_layout(common_layout, showlegend=True)
+    st.plotly_chart(fig_circle, use_container_width=True)
 
         # Insight spesifik kategori
-        n_resp = len(filtered_df)
-        pct_small = (filtered_df['Jumlah Anggota Circle'] <= 5).mean() * 100
-        top_cat = circle_count.iloc[0]
-        top_cat_pct = top_cat['Jumlah'] / n_resp * 100 if n_resp > 0 else 0
-        st.markdown(
-            f"**Insight:** **{pct_small:.1f}%** responden memiliki circle kecil (≤5 orang). *Circle kecil cenderung lebih intim dan mendukung interaksi mendalam.*"
+    n_resp = len(filtered_df)
+    pct_small = (filtered_df['Jumlah Anggota Circle'] <= 5).mean() * 100
+    pct_sedang = ((filtered_df['Jumlah Anggota Circle'] > 5) & (filtered_df['Jumlah Anggota Circle'] <= 10)).mean() * 100
+    pct_besar = (filtered_df['Jumlah Anggota Circle'] > 10).mean() * 100
+    top_cat = circle_count.iloc[0]
+    top_cat_pct = top_cat['Jumlah'] / n_resp * 100 if n_resp > 0 else 0
+    st.markdown(
+            f"**Insight:** **{pct_small:.1f}%** responden memiliki circle kecil (1-5 orang). **{pct_sedang:.1f}%** memiliki circle sedang (6-10 orang), dan **{pct_besar:.1f}%** memiliki circle besar (>10 orang). Kategori circle terbanyak adalah **{top_cat['Kategori Circle']}** ({top_cat['Jumlah']} responden → **{top_cat_pct:.1f}%**). *Circle kecil cenderung lebih intim dan mendukung interaksi mendalam.*"
         )
 
     st.markdown("---")
@@ -359,50 +303,25 @@ with tab1:
     top_inter = interaksi_count.iloc[0]
     top_inter_pct = top_inter['Jumlah'] / n_resp * 100 if n_resp > 0 else 0
     st.markdown(
-            f"**Insight:** Interaksi terbanyak: **{top_inter['Jenis Interaksi']}** ({top_inter['Jumlah']} responden → **{top_inter_pct:.1f}%**). "
-            " *Ini menunjukkan cara utama circle membangun hubungan.*"
-    )
-    col5, col6 = st.columns(2)
+            f"**Insight:** Interaksi terbanyak: **{top_inter['Jenis Interaksi']}**. *Ini adalah cara utama circle untuk berkomunikasi sehingga tidak melulu membahas akademik saja.*")
 
-    with col5:
-        # Frekuensi Bertemu (histogram)
-
-        fig_freq_meet = px.histogram(
-            filtered_df,
-            x='Frekuensi Bertemu Seminggu',
-            nbins=8,
-            title='Sebaran Frekuensi Bertemu per Minggu',
-            color_discrete_sequence=custom_blues
-        )
-        fig_freq_meet.update_layout(common_layout, showlegend=False)
-        fig_freq_meet.update_xaxes(title_text="Kali bertemu / minggu")
-        st.plotly_chart(fig_freq_meet, use_container_width=True)
-
-        # Tambahan insight frekuensi bertemu
-        mean_meet = filtered_df['Frekuensi Bertemu Seminggu'].mean()
-        pct_never_meet = (filtered_df['Frekuensi Bertemu Seminggu'] == 0).mean() * 100
-        st.markdown(
-            f"**Insight:** Rata-rata bertemu **{mean_meet:.1f}x/minggu**. *Ini menunjukkan seberapa sering circle berinteraksi secara langsung.* "
-        )
-
-    # Frekuensi Belajar Bersama (histogram, full width)
-    with col6:
-        fig_freq_study = px.histogram(
+    # Grafik gabungan histogram dan garis frekuensi belajar bersama seminggu dan frekuensi bertemu
+    fig_freq_study = px.histogram(
             filtered_df,
             x='Frekuensi Belajar Bersama Seminggu',
             nbins=8,
             title='Sebaran Frekuensi Belajar Bersama per Minggu',
             color_discrete_sequence=custom_blues
         )
-        fig_freq_study.update_layout(common_layout, showlegend=False)
-        fig_freq_study.update_xaxes(title_text="Kali belajar bersama / minggu")
-        st.plotly_chart(fig_freq_study, use_container_width=True)
+    fig_freq_study.update_layout(common_layout, showlegend=False)
+    fig_freq_study.update_xaxes(title_text="Kali belajar bersama / minggu")
+    st.plotly_chart(fig_freq_study, use_container_width=True)
 
         # Tambahan insight frekuensi belajar
-        mean_study = filtered_df['Frekuensi Belajar Bersama Seminggu'].mean()
-        pct_never_study = (filtered_df['Frekuensi Belajar Bersama Seminggu'] == 0).mean() * 100
-        st.markdown(
-            f"**Insight:** Rata-rata belajar bersama **{mean_study:.1f}x/minggu** dan sebanyak **{pct_never_study:.1f}%** responden tidak pernah belajar bersama. "
+    median_study = filtered_df['Frekuensi Belajar Bersama Seminggu'].median()
+    pct_never_study = (filtered_df['Frekuensi Belajar Bersama Seminggu'] == 0).mean() * 100
+    st.markdown(
+            f"**Insight:** Median belajar bersama **{median_study:.1f}x/minggu** dan sebanyak **{pct_never_study:.1f}%** responden tidak pernah belajar bersama. *Frekuensi belajar bersama yang rendah bisa jadi karena jadwal yang padat atau preferensi belajar individu.*"
         )
 
     st.markdown("---")
@@ -411,13 +330,11 @@ with tab1:
     # 4. DINAMIKA CIRCLE & MOTIVASI
     # ---------------------------
     st.markdown("### 🚀 Dinamika Circle & Motivasi Belajar")
-    col7, col8 = st.columns(2)
-
-    with col7:
+ 
         # Dukungan Circle (kategori)
-        dukungan_count = filtered_df['Dukungan Circle'].value_counts().reset_index()
-        dukungan_count.columns = ['Dukungan Circle', 'Jumlah']
-        fig_dukungan = px.bar(
+    dukungan_count = filtered_df['Dukungan Circle'].value_counts().reset_index()
+    dukungan_count.columns = ['Dukungan Circle', 'Jumlah']
+    fig_dukungan = px.bar(
             dukungan_count,
             y='Dukungan Circle',
             x='Jumlah',
@@ -426,151 +343,40 @@ with tab1:
             color_discrete_sequence=custom_blues,
             color='Dukungan Circle'
         )
-        fig_dukungan.update_layout(common_layout, showlegend=False, yaxis={'categoryorder':'total ascending'})
-        fig_dukungan.update_yaxes(automargin=True)
-        st.plotly_chart(fig_dukungan, use_container_width=True)
+    fig_dukungan.update_layout(common_layout, showlegend=False, yaxis={'categoryorder':'total ascending'})
+    fig_dukungan.update_yaxes(automargin=True)
+    st.plotly_chart(fig_dukungan, use_container_width=True)
 
         # Insight dukungan
-        top_support = dukungan_count.iloc[0]
-        pct_top_support = top_support['Jumlah'] / n_resp * 100 if n_resp > 0 else 0
-        st.markdown(
-            f"**Insight:** Mayoritas melaporkan **{top_support['Dukungan Circle']}** sebagai tingkat dukungan ({pct_top_support:.1f}%). "
+    top_support = dukungan_count.iloc[0]
+    pct_top_support = top_support['Jumlah'] / n_resp * 100 if n_resp > 0 else 0
+    st.markdown(
+            f"**Insight:** Mayoritas melaporkan **{top_support['Dukungan Circle']}** sebagai tingkat dukungan ({pct_top_support:.2f}%). "
             " *Jika dukungan tinggi, circle kemungkinan mempercepat penyelesaian tugas.*"
         )
-
-    with col8:
-        #Gangguan Akademik pie chart
-        gangguan_count = filtered_df['Gangguan Akademik'].value_counts().reset_index()
-        gangguan_count.columns = ['Gangguan Akademik', 'Jumlah']
-        fig_gangguan = px.pie(
+    
+    # Pie chart gangguan akademik
+    gangguan_count = filtered_df["Gangguan Akademik"].value_counts().reset_index()
+    gangguan_count.columns = ['Gangguan Akademik', 'Jumlah']
+    fig_gangguan = px.pie(
             gangguan_count,
             names='Gangguan Akademik',
             values='Jumlah',
-            title='Proporsi Gangguan Akademik oleh Circle',
+            title='Proporsi Gangguan Akademik',
             color_discrete_sequence=custom_blues
         )
-        fig_gangguan.update_traces(textposition='inside', textinfo='percent+label')
-        fig_gangguan.update_layout(common_layout, showlegend=False)
-        st.plotly_chart(fig_gangguan, use_container_width=True)
+        #color text inside pie white
+    fig_gangguan.update_traces(textposition='inside', textinfo='percent+label')
+    fig_gangguan.update_layout(common_layout, showlegend=True)
+    st.plotly_chart(fig_gangguan, use_container_width=True)
 
-        # Insight gangguan
-        no_gangguan = gangguan_count[gangguan_count['Gangguan Akademik'] == 'Tidak']
-        hi = no_gangguan['Jumlah'].iloc[0] / n_resp * 100 if n_resp > 0 and not no_gangguan.empty else 0
-        st.markdown(
-            f"**Insight:** Sebanyak **{hi:.1f}%** responden tidak merasa terganggu akademiknya oleh circle, menandakan circle umumnya tidak menghambat fokus belajar."
-        )
-
-
-    # Persepsi Motivasi & Motivasi Penyelesaian Tugas (kategorikal)
-    # 7. Seberapa setuju Anda bahwa circle pertemanan dapat meningkatkan motivasi belajar Anda? (Persepsi Motivasi)
-    # 9. Dari skala 1–5, seberapa besar circle pertemanan Anda memotivasi Anda untuk menyelesaikan tugas tepat waktu? (Motivasi Penyelesaian Tugas)
-
-    col9, col10, col11 = st.columns(3)
-
-    with col9:
-        persepsi_count = filtered_df['Persepsi Motivasi Kategori'].value_counts().reset_index()
-        persepsi_count.columns = ['Persepsi Motivasi', 'Jumlah']
-        fig_persepsi = px.bar(
-            persepsi_count,
-            y='Persepsi Motivasi',
-            x='Jumlah',
-            orientation='h',
-            title='Persepsi Motivasi Belajar dari Circle',
-            color_discrete_sequence=custom_blues,
-            color='Persepsi Motivasi'
-        )
-        fig_persepsi.update_layout(common_layout, showlegend=False, yaxis={'categoryorder':'total ascending'})
-        fig_persepsi.update_yaxes(automargin=True)
-        st.plotly_chart(fig_persepsi, use_container_width=True)
-        
-        # Insight persepsi motivasi fitur kategorikal
-        persepsi_setuju_sangat_setuju = filtered_df['Persepsi Motivasi Kategori'].isin(['Setuju', 'Sangat Setuju']).mean() * 100
-
-        if persepsi_setuju_sangat_setuju >= 50:
-            persepsi_insight = "mayoritas responden memiliki persepsi positif terhadap motivasi belajar dari circle."
-        else:
-            persepsi_insight = "mayoritas responden kurang memiliki persepsi positif terhadap motivasi belajar dari circle."
-
-        st.markdown(
-            f"**Insight:** Sebanyak **{persepsi_setuju_sangat_setuju:.1f}%** yang memilih **Setuju** atau **Sangat Setuju**, menunjukkan bahwa {persepsi_insight}"
-        )
-    
-    # Konsistensi dukungan belajar horizontal
-    with col10:
-        konsistensi_count = filtered_df['Konsistensi Dukungan Belajar Kategori'].value_counts().reset_index()
-        konsistensi_count.columns = ['Konsistensi Dukungan', 'Jumlah']
-        fig_konsistensi = px.bar(
-            konsistensi_count,
-            y='Konsistensi Dukungan',
-            x='Jumlah',
-            title='Konsistensi Dukungan Belajar dari Circle',
-            orientation='h',
-            color='Konsistensi Dukungan',
-            color_discrete_sequence=custom_blues
-        )
-        fig_konsistensi.update_layout(common_layout, yaxis={'categoryorder':'total ascending'}, showlegend=False)
-        st.plotly_chart(fig_konsistensi, use_container_width=True)
-
-        # Insight konsistensi dukungan belajar fitur kategorikal
-        konsistensi_konsisten_sangat_konsisten = filtered_df['Konsistensi Dukungan Belajar Kategori'].isin(['Konsisten', 'Sangat Konsisten']).mean() * 100
-
-
-        if konsistensi_konsisten_sangat_konsisten >= 50:
-            konsistensi_insight = "mayoritas responden merasa mendapatkan dukungan belajar yang konsisten dari circle."
-        else:
-            konsistensi_insight = "mayoritas responden merasa kurang mendapatkan dukungan belajar yang konsisten dari circle."
-        
-        st.markdown(
-            f"**Insight:** Sebanyak **{konsistensi_konsisten_sangat_konsisten:.1f}%** yang memilih **Konsisten** atau **Sangat Konsisten**, menunjukkan bahwa {konsistensi_insight}"
-        )
-
-    with col11:
-        motivasi_count = filtered_df['Motivasi Penyelesaian Tugas Kategori'].value_counts().reset_index()
-        motivasi_count.columns = ['Motivasi Penyelesaian Tugas', 'Jumlah']
-        fig_motivasi = px.bar(
-            motivasi_count,
-            y='Motivasi Penyelesaian Tugas',
-            x='Jumlah',
-            title='Motivasi Penyelesaian Tugas dari Circle',
-            orientation='h',
-            color='Motivasi Penyelesaian Tugas',
-            color_discrete_sequence=custom_blues
-        )
-        fig_motivasi.update_layout(common_layout, showlegend=False, yaxis={'categoryorder':'total ascending'})
-        st.plotly_chart(fig_motivasi, use_container_width=True)
-
-        # Insight motivasi penyelesaian tugas fitur kategorikal
-        motivasi_termotivasi_sangat_termotivasi = filtered_df['Motivasi Penyelesaian Tugas Kategori'].isin(['Termotivasi', 'Sangat Termotivasi']).mean() * 100
-
-        if motivasi_termotivasi_sangat_termotivasi >= 50:
-            motivasi_insight = "mayoritas responden merasa termotivasi menyelesaikan tugas tepat waktu oleh circle."
-
-        else:
-            motivasi_insight = "mayoritas responden kurang merasa termotivasi menyelesaikan tugas tepat waktu oleh circle."
-
-        st.markdown(
-            f"**Insight:** Sebanyak **{motivasi_termotivasi_sangat_termotivasi:.1f}%** yang memilih **Termotivasi** atau **Sangat Termotivasi**, menunjukkan bahwa {motivasi_insight}"
-        )
-
-    
-
-    st.markdown("---")
-
-
-    # ---------------------------
-    st.markdown("### 🔎 Highlight Cepat")
-    top3_prodi = filtered_df['Program Studi'].value_counts().head(3)
-    top3_str = ", ".join([f"{i+1}. {idx} ({cnt})" for i,(idx,cnt) in enumerate(top3_prodi.items())])
+    # Interpretasi gangguan
+    top_gangguan = gangguan_count.iloc[0]  # baris dengan jumlah terbanyak
+    pct_top_gangguan = (top_gangguan['Jumlah'] / n_resp) * 100
 
     st.markdown(
-        f"- **Top 3 Program Studi** dengan responden terbanyak: {top3_str}.\n"
-        f"- **{pct_small:.1f}%** responden memiliki circle kecil (≤5 orang), yang cenderung lebih intim dan mendukung interaksi mendalam.\n"
-        f"- Mayoritas responden melaporkan tingkat dukungan circle sebagai **{top_support['Dukungan Circle']}**, menunjukkan peran positif circle dalam mendukung akademik.\n"
-        f"- Sebanyak **{hi:.1f}%** responden tidak merasa terganggu akademiknya oleh circle, menandakan circle umumnya tidak menghambat fokus belajar.\n"
-        f"- Sebanyak **{konsistensi_konsisten_sangat_konsisten:.1f}%** responden merasa mendapatkan dukungan belajar yang konsisten dari circle, menegaskan peran circle dalam menyediakan dukungan akademik yang stabil.\n"
-        f"- Sebanyak **{persepsi_setuju_sangat_setuju:.1f}%** responden memiliki persepsi positif terhadap motivasi belajar dari circle, menunjukkan pengaruh sosial yang signifikan.\n"
-        f"- Sebanyak **{motivasi_termotivasi_sangat_termotivasi:.1f}%** responden merasa termotivasi oleh circle, menegaskan peran circle dalam mendorong penyelesaian tugas tepat waktu."
-    )
+    f"**Insight:** **{pct_top_gangguan:.1f}%** responden melaporkan **{top_gangguan['Gangguan Akademik']}** merasa terganggu akademiknya dengan adanya circle pertemanan. *Ini menandakan bahwa hambatan akademik relatif rendah dan lingkungan belajar kemungkinan berjalan kondusif.*")
+
 
     st.markdown("---")
     st.markdown(
@@ -630,11 +436,9 @@ with tab2:
     - Nilai mendekati **−1** → hubungan linear negatif yang kuat.  
     - Nilai mendekati **0** → tidak ada hubungan linear yang kuat.  
     """)
-    st.markdown("---")
     # ==============================
     # 2️⃣ INTERPRETASI OTOMATIS
     # ==============================
-    st.subheader("2️⃣ Interpretasi Korelasi Terkuat")
 
     # Ambil korelasi terkuat (positif dan negatif) salah satu arah
     corr_pairs = corr_matrix.unstack()
@@ -643,19 +447,9 @@ with tab2:
     top_pos_corr = corr_pairs[corr_pairs > 0].head(3)
     top_neg_corr = corr_pairs[corr_pairs < 0].tail(3)
 
-    st.markdown("📈 **Korelasi Positif Terkuat:**")
-    for (var1, var2), corr_value in top_pos_corr.items():
-        st.markdown(f"- **{var1}** dan **{var2}**: r = {corr_value:.2f}")
-    st.markdown("📉 **Korelasi Negatif Terkuat:**")
-
-    # urut dari yang paling negatif
-    top_neg_corr = top_neg_corr.sort_values()
-    for (var1, var2), corr_value in top_neg_corr.items():
-        st.markdown(f"- **{var1}** dan **{var2}**: r = {corr_value:.2f}")
-
     st.markdown("---")
     # 3. INSIGHT KHUSUS AUTOMATIS
-    st.subheader("3️⃣ Highlight Insight")
+    st.subheader("2️⃣ Interpretasi Hasil Uji Korelasi")
     st.markdown(
         f"- Korelasi positif terkuat adalah antara **{top_pos_corr.index[0][0]}** dan **{top_pos_corr.index[0][1]}** (r = {top_pos_corr.iloc[0]:.2f}), menunjukkan bahwa peningkatan pada satu variabel cenderung diikuti oleh peningkatan pada variabel lainnya.\n"
         f"- Korelasi negatif terkuat adalah antara **{top_neg_corr.index[0][0]}** dan **{top_neg_corr.index[0][1]}** (r = {top_neg_corr.iloc[0]:.2f}), menunjukkan bahwa peningkatan pada satu variabel cenderung diikuti oleh penurunan pada variabel lainnya.\n"
@@ -761,13 +555,13 @@ with tab4:
     df = filtered_df
 
     # Pilih variabel dependen dan independen
-    target_var = 'Motivasi Penyelesaian Tugas'
+    target_var = 'Durasi Belajar Sehari'
     feature_vars = [
         'Jumlah Anggota Circle',
         'Frekuensi Bertemu Seminggu',
         'Frekuensi Belajar Bersama Seminggu',
+        'Motivasi Penyelesaian Tugas',
         'Konsistensi Dukungan Belajar',
-        'Durasi Belajar Sehari',
         'Persepsi Motivasi'
     ]
 
@@ -824,90 +618,69 @@ with tab4:
     }, index=['Regression', 'Error', 'Total'])
     st.dataframe(anova_table)
 
-    st.markdown("**Kriteria Keputusan Uji F:**")
-    st.markdown("- Jika F statistic > F table → Tolak H0 (model regresi signifikan secara statistik).")
-    st.markdown("- Jika F statistic ≤ F table → Gagal tolak H0 (model regresi tidak signifikan secara statistik).")
-
     # UJI F dengan F table
     alpha = 0.05
     f_table = stats.f.ppf(1 - alpha, len(feature_vars), len(y) - len(feature_vars) - 1)
     f_stat = anova_table.loc['Regression', 'F']
-    st.markdown("**Hasil Uji F:**")
-    st.markdown(f"- **F statistic** = **{f_stat:.4f}**")
-    st.markdown(f"- **F table** (α = {alpha}, df1 = {len(feature_vars)}, df2 = {len(y) - len(feature_vars) - 1}) = **{f_table:.4f}**")
 
-
-
-    st.markdown("**Kesimpulan Uji F:**")
-
-    if f_stat > f_table:
-        st.markdown("-  **F statistic > F table** → **Tolak H0** (model regresi signifikan secara statistik) sehingga dapat kita lanjutkan ke **Uji t** untuk melihat variabel mana yang signifikan secara individual.")
-    else:
-        st.markdown("-  **F statistic ≤ F table** → **Gagal tolak H0** (model regresi tidak signifikan secara statistik) sehingga tidak perlu melanjutkan ke **Uji t** karena modelnya tidak signifikan.")
 
     st.markdown("---")
     # UJI t untuk setiap variabel X1, X2, ...
-    if f_stat > f_table:
-        st.subheader("3️⃣ Uji t untuk Signifikansi Setiap Variabel Independen")
-        st.markdown("**Hasil Uji t untuk Setiap Variabel Independen:**")
-        ttest_results = []
-        for i, var in enumerate(feature_vars):
-            se = np.sqrt(mse / np.sum((X.iloc[:, i] - X.iloc[:, i].mean())**2))
-            t_stat = model.coef_[i] / se
-            p_val = 2 * (1 - stats.t.cdf(np.abs(t_stat), df=len(y) - len(feature_vars) - 1))
-            ttest_results.append((var, model.coef_[i], t_stat, p_val))
-        ttest_df = pd.DataFrame(ttest_results, columns=['Variabel', 'Koefisien', 't-statistic', 'p-value'])
-        ttest_df['Signifikan (α=0.05)'] = ttest_df['p-value'] < 0.05
-        st.dataframe(ttest_df)
-
-        st.markdown("**Kriteria Keputusan Uji t:**")
-        st.markdown("- |t-statistic| > t table → Tolak H0 (variabel signifikan secara statistik).")
-        st.markdown("- |t-statistic| ≤ t table → Gagal tolak H0 (variabel tidak signifikan secara statistik).")
-        t_table = stats.t.ppf(1 - alpha/2, df=len(y) - len(feature_vars) - 1)
-
-        st.markdown("**Hasil Uji t:**")
-        st.markdown(f"- **t table** (α = {alpha}, df = {len(y) - len(feature_vars) - 1}) = **{t_table:.4f}**")
-        for _, row in ttest_df.iterrows():
-            var = row['Variabel']
-            t_stat = row['t-statistic']
-            p_val = row['p-value']
-            if abs(t_stat) > t_table:
-                st.markdown(f"- Variabel **{var}**: |t-statistic| = **{abs(t_stat):.4f}** > t table → **Tolak H0** (variabel signifikan secara statistik, p-value = {p_val:.4f}).")
-            else:
-                st.markdown(f"- Variabel **{var}**: |t-statistic| = **{abs(t_stat):.4f}** ≤ t table → **Gagal tolak H0** (variabel tidak signifikan secara statistik, p-value = {p_val:.4f}).")
-
-        st.markdown("**Kesimpulan Uji t:**")
-        signifikan_df = ttest_df[ttest_df['Signifikan (α=0.05)']]
-        if signifikan_df.empty:
-            st.markdown("Tidak ada variabel independen yang signifikan secara statistik dalam memprediksi variabel dependen.")
-        else:   
-            for _, row in signifikan_df.iterrows():
-                var = row['Variabel']
-                coef = row['Koefisien']
-                p_val = row['p-value']
-                nama_asli = coefficients_display[coefficients_display['Variabel'] == var]['Nama Asli'].values[0]
-                if coef > 0:
-                    st.markdown(f"- Variabel **{var}** yaitu **{nama_asli}** memiliki koefisien positif ({coef:.4f}) dan signifikan (p-value = {p_val:.4f}), menunjukkan bahwa peningkatan pada variabel ini cenderung diikuti oleh peningkatan pada variabel dependen.")
-                else:
-                    st.markdown(f"- Variabel **{var}** yaitu **{nama_asli}** memiliki koefisien negatif ({coef:.4f}) dan signifikan (p-value = {p_val:.4f}), menunjukkan bahwa peningkatan pada variabel ini cenderung diikuti oleh penurunan pada variabel dependen.")
-        st.markdown(f"- Variabel yang tidak signifikan secara statistik tidak memberikan kontribusi yang berarti dalam memprediksi variabel dependen seperti pada variabel **{', '.join(set(feature_vars) - set(signifikan_df['Variabel'].tolist()))}** yaitu **{', '.join([coefficients_display[coefficients_display['Variabel'] == var]['Nama Asli'].values[0] for var in set(feature_vars) - set(signifikan_df['Variabel'].tolist())])}**.")
-    else:
-        st.markdown("Karena model regresi tidak signifikan secara statistik berdasarkan Uji F, maka Uji t untuk setiap variabel independen tidak dilakukan.")
-
+    if f_stat > f_table: st.subheader("3️⃣ Uji t untuk Signifikansi Setiap Variabel Independen")
+    st.markdown("**Hasil Uji t untuk Setiap Variabel Independen:**") 
+    ttest_results = [] 
+    for i, var in enumerate(feature_vars): 
+        se = np.sqrt(mse / np.sum((X.iloc[:, i] - X.iloc[:, i].mean())**2)) 
+        t_stat = model.coef_[i] / se 
+        p_val = 2 * (1 - stats.t.cdf(np.abs(t_stat), df=len(y) - len(feature_vars) - 1)) 
+        ttest_results.append((var, model.coef_[i], t_stat, p_val)) 
+        ttest_df = pd.DataFrame(ttest_results, columns=['Variabel', 'Koefisien', 't-statistic', 'p-value']) 
+        ttest_df['Signifikan (α=0.05)'] = ttest_df['p-value'] < 0.05 
+    st.dataframe(ttest_df) 
+    t_table = stats.t.ppf(1 - alpha/2, df=len(y) - len(feature_vars) - 1)
+    
     st.markdown("---")
-    # Kesimpulan Akhir Regresi Linear Berganda
+    
+    # ==============================
+    # 4️⃣ KESIMPULAN AKHIR (SINGKAT)
+    # ==============================
     st.subheader("4️⃣ Kesimpulan Akhir")
-    st.markdown("Persamaan model regesii linear berganda yang diperoleh yaitu sebagai berikut:")
+
+    # Persamaan regresi
+    st.markdown("Persamaan model regresi linear berganda yang diperoleh yaitu sebagai berikut:")
     st.latex(f"Y = {intercept:.4f} + {equation}")
-    st.markdown(f"Dimana Y adalah **{target_var}**, dan X1, X2, ..., X{len(feature_vars)} adalah variabel independen yang telah dijelaskan sebelumnya.")
+    st.markdown(
+        f"Dimana **Y** adalah **{target_var}**, dan **X1, X2, ..., X{len(feature_vars)}** merupakan variabel independen "
+        f"yang telah didefinisikan sebelumnya."
+    )
+
+    # Interpretasi Uji F dan Uji t secara menyatu
     if f_stat > f_table:
-        st.markdown(f"- Model regresi linear berganda signifikan secara statistik (F statistic = {f_stat:.4f} > F table = {f_table:.4f}), dengan R² = {r2:.4f}, menunjukkan bahwa sekitar {r2*100:.2f}% variasi dalam **{target_var}** dapat dijelaskan oleh variabel independen yang dipilih.")
-        if not signifikan_df.empty:
-            # nama asli variabel signifikan
-            st.markdown(f"- Variabel independen yang signifikan secara statistik dalam memprediksi **{target_var}** adalah: {', '.join(signifikan_df['Variabel'].tolist())} yaitu {', '.join([coefficients_display[coefficients_display['Variabel'] == var]['Nama Asli'].values[0] for var in signifikan_df['Variabel'].tolist()])}.")
-            st.markdown("- Variabel-variabel ini memberikan kontribusi yang berarti dalam memprediksi variabel dependen dan dapat menjadi fokus untuk intervensi atau strategi peningkatan motivasi penyelesaian tugas.")
-        else:
-            st.markdown(f"- Tidak ada variabel independen yang signifikan secara statistik dalam memprediksi **{target_var}**, menunjukkan bahwa variabel-variabel yang dipilih mungkin tidak relevan atau ada faktor lain yang lebih berpengaruh.")
+        signifikan_vars = ttest_df[ttest_df['Signifikan (α=0.05)'] == True]['Variabel'].tolist()
+        nonsignifikan_vars = ttest_df[ttest_df['Signifikan (α=0.05)'] == False]['Variabel'].tolist()
+
+        kesimpulan_text = (
+            f"✅ **Model regresi signifikan secara statistik** (F statistic = {f_stat:.4f} > F table = {f_table:.4f}), "
+            f"yang berarti **setidaknya ada satu variabel independen yang berpengaruh signifikan** terhadap variabel dependen **{target_var}**."
+        )
+
+        if len(signifikan_vars) > 0:
+            kesimpulan_text += (
+                f"\n\n🙆‍♂️ Variabel yang terbukti **berpengaruh signifikan** berdasarkan uji t (p < 0.05) adalah: "
+                f"**{', '.join(signifikan_vars)}**."
+            )
+        if len(nonsignifikan_vars) > 0:
+            kesimpulan_text += (
+                f"\n\n🙅‍♂️ Sementara itu, variabel yang tidak signifikan adalah: "
+                f"{', '.join(nonsignifikan_vars)}."
+            )
+
+        st.markdown(kesimpulan_text)
+    else:
+        st.error(
+            f"❌ **Model regresi tidak signifikan secara statistik** (F statistic = {f_stat:.4f} ≤ F table = {f_table:.4f}), "
+            "sehingga uji t tidak dilanjutkan dan tidak ada variabel independen yang dapat disimpulkan berpengaruh signifikan."
+        )
 
 
     st.markdown("---")
@@ -918,10 +691,4 @@ with tab4:
             </div>
             """,
             unsafe_allow_html=True
-
     )
-
-
-
-
-
