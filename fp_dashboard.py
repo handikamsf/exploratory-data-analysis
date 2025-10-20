@@ -429,7 +429,7 @@ with tab2:
     plt.tight_layout()
 
     st.pyplot(fig)
-
+    
     st.markdown("""
     🔹 **Interpretasi singkat:**  
     - Nilai mendekati **+1** → hubungan linear positif yang kuat.  
@@ -456,7 +456,7 @@ with tab2:
         f"- Korelasi yang mendekati nol, seperti antara **{corr_pairs[corr_pairs.abs() < 0.1].index[0][0]}** dan **{corr_pairs[corr_pairs.abs() < 0.1].index[0][1]}** (r = {corr_pairs[corr_pairs.abs() < 0.1].iloc[0]:.2f}), menunjukkan tidak adanya hubungan linear yang signifikan antara kedua variabel tersebut."
     )
     
-
+    st.markdown("---")
     st.markdown(
         """
         <div style="text-align: center; color: #9fb3c8; font-size: 13px;">
@@ -692,3 +692,4 @@ with tab4:
             """,
             unsafe_allow_html=True
     )
+
